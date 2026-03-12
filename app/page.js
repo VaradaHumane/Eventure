@@ -73,7 +73,7 @@ export default function HomePage() {
               className="text-6xl md:text-8xl font-bold text-white leading-tight mb-6 animate-fade-up animate-delay-100"
               style={{ fontFamily: 'var(--font-lora)' }}
             >
-              Your college events,<br />
+              Your college events<br />
               <span className="text-amber-400">all in one place.</span>
             </h1>
 
@@ -110,7 +110,7 @@ export default function HomePage() {
                 How it works
               </h2>
               <p className="text-stone-500 text-lg max-w-xl mx-auto">
-                From sign-in to attendance — the entire event lifecycle in three simple steps.
+                From sign-in to attendance, the entire event lifecycle in three simple steps.
               </p>
             </div>
 
@@ -149,7 +149,7 @@ export default function HomePage() {
                 Built for everyone on campus
               </h2>
               <p className="text-stone-500 text-lg max-w-xl mx-auto">
-                Three distinct roles — each with their own dashboard and permissions.
+                Three distinct roles: each with their own dashboard and permissions.
               </p>
             </div>
 
@@ -201,7 +201,6 @@ export default function HomePage() {
               </div>
               <span className="text-stone-400 text-sm font-semibold">eventure</span>
             </div>
-            <p className="text-stone-600 text-xs">Campus Event Management System · College Project</p>
           </div>
         </footer>
 
