@@ -10,7 +10,7 @@ import { format } from 'date-fns'
 
 export default function ManageEventPage() {
   const [event, setEvent] = useState(null)
-  const [rsvps, setRsvps] = useState([])
+  const [registrations, setRegistrations] = useState([])
   const [attendance, setAttendance] = useState([])
   const [loading, setLoading] = useState(true)
   const [attendanceLoading, setAttendanceLoading] = useState(null)
@@ -26,7 +26,7 @@ export default function ManageEventPage() {
       setUser(user)
       if (user) {
         await fetchEvent()
-        await fetchRSVPs()
+        await fetchRegistrations()
         await fetchAttendance()
       }
       setLoading(false)
@@ -43,16 +43,13 @@ export default function ManageEventPage() {
     setEvent(data)
   }
 
-  const fetchRSVPs = async () => {
+  const fetchRegistrations = async () => {
     const { data } = await supabase
       .from('rsvps')
-      .select(`
-        *,
-        profiles(id, full_name, email, avatar_url)
-      `)
+      .select(`*, profiles(id, full_name, email, avatar_url)`)
       .eq('event_id', params.id)
       .order('registered_at', { ascending: true })
-    setRsvps(data || [])
+    setRegistrations(data || [])
   }
 
   const fetchAttendance = async () => {
@@ -65,7 +62,6 @@ export default function ManageEventPage() {
 
   const toggleAttendance = async (studentId, isPresent) => {
     setAttendanceLoading(studentId)
-
     if (isPresent) {
       await supabase
         .from('attendance')
@@ -76,14 +72,9 @@ export default function ManageEventPage() {
     } else {
       await supabase
         .from('attendance')
-        .insert({
-          event_id: params.id,
-          student_id: studentId,
-          marked_by: user.id,
-        })
+        .insert({ event_id: params.id, student_id: studentId, marked_by: user.id })
       setAttendance(prev => [...prev, studentId])
     }
-
     setAttendanceLoading(null)
   }
 
@@ -128,7 +119,6 @@ export default function ManageEventPage() {
     <DashboardLayout>
       <div className="space-y-6 max-w-3xl mx-auto">
 
-        {/* Back button */}
         <Link
           href="/organiser/events"
           className="inline-flex items-center gap-2 text-stone-500 hover:text-stone-900 transition-colors text-sm font-medium"
@@ -137,7 +127,6 @@ export default function ManageEventPage() {
           Back to My Events
         </Link>
 
-        {/* Event header card */}
         <div className="bg-white rounded-2xl border border-stone-100 overflow-hidden">
           {event.image_url && (
             <div className="h-48 overflow-hidden">
@@ -164,7 +153,6 @@ export default function ManageEventPage() {
               </div>
             </div>
 
-            {/* Event details */}
             <div className="flex flex-wrap gap-4 mt-4 pt-4 border-t border-stone-100">
               <div className="flex items-center gap-2 text-stone-500 text-sm">
                 <Calendar size={15} className="text-stone-400" />
@@ -182,7 +170,7 @@ export default function ManageEventPage() {
               )}
               <div className="flex items-center gap-2 text-stone-500 text-sm">
                 <Users size={15} className="text-stone-400" />
-                {rsvps.length} registered
+                {registrations.length} students registered
                 {event.capacity && ` / ${event.capacity} capacity`}
               </div>
             </div>
@@ -195,10 +183,9 @@ export default function ManageEventPage() {
           </div>
         </div>
 
-        {/* Stats row */}
         <div className="grid grid-cols-3 gap-4">
           <div className="bg-white rounded-2xl border border-stone-100 p-4 text-center">
-            <p className="text-2xl font-bold text-stone-900">{rsvps.length}</p>
+            <p className="text-2xl font-bold text-stone-900">{registrations.length}</p>
             <p className="text-stone-500 text-xs mt-1">Registered</p>
           </div>
           <div className="bg-white rounded-2xl border border-stone-100 p-4 text-center">
@@ -207,13 +194,12 @@ export default function ManageEventPage() {
           </div>
           <div className="bg-white rounded-2xl border border-stone-100 p-4 text-center">
             <p className="text-2xl font-bold text-stone-900">
-              {rsvps.length > 0 ? Math.round((attendanceCount / rsvps.length) * 100) : 0}%
+              {registrations.length > 0 ? Math.round((attendanceCount / registrations.length) * 100) : 0}%
             </p>
             <p className="text-stone-500 text-xs mt-1">Attendance Rate</p>
           </div>
         </div>
 
-        {/* Tabs */}
         <div className="flex gap-2 bg-stone-100 p-1 rounded-xl w-fit">
           <button
             onClick={() => setActiveTab('students')}
@@ -223,7 +209,7 @@ export default function ManageEventPage() {
                 : 'text-stone-500 hover:text-stone-700'
             }`}
           >
-            Registered Students ({rsvps.length})
+            Registered Students ({registrations.length})
           </button>
           <button
             onClick={() => setActiveTab('attendance')}
@@ -237,14 +223,13 @@ export default function ManageEventPage() {
           </button>
         </div>
 
-        {/* Students list */}
-        {rsvps.length === 0 ? (
+        {registrations.length === 0 ? (
           <div className="text-center py-16 bg-white rounded-2xl border border-stone-100">
             <div className="w-14 h-14 bg-stone-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
               <Users size={22} className="text-stone-400" />
             </div>
             <p className="text-stone-900 font-semibold">No students registered yet</p>
-            <p className="text-stone-500 text-sm mt-1">Students who RSVP will appear here</p>
+            <p className="text-stone-500 text-sm mt-1">Students who register will appear here</p>
           </div>
         ) : (
           <div className="bg-white rounded-2xl border border-stone-100 overflow-hidden">
@@ -259,14 +244,12 @@ export default function ManageEventPage() {
               )}
             </div>
             <div className="divide-y divide-stone-50">
-              {rsvps.map(rsvp => {
-                const student = rsvp.profiles
+              {registrations.map(registration => {
+                const student = registration.profiles
                 const isPresent = attendance.includes(student?.id)
 
                 return (
-                  <div key={rsvp.id} className="flex items-center gap-3 px-4 py-3 hover:bg-stone-50 transition-colors">
-
-                    {/* Avatar */}
+                  <div key={registration.id} className="flex items-center gap-3 px-4 py-3 hover:bg-stone-50 transition-colors">
                     {student?.avatar_url ? (
                       <img
                         src={student.avatar_url}
@@ -281,7 +264,6 @@ export default function ManageEventPage() {
                       </div>
                     )}
 
-                    {/* Info */}
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-stone-900 text-sm truncate">
                         {student?.full_name || 'Unknown'}
@@ -289,7 +271,6 @@ export default function ManageEventPage() {
                       <p className="text-stone-500 text-xs truncate">{student?.email}</p>
                     </div>
 
-                    {/* Attendance tab — toggle button */}
                     {activeTab === 'attendance' && (
                       <button
                         onClick={() => toggleAttendance(student.id, isPresent)}
@@ -308,7 +289,6 @@ export default function ManageEventPage() {
                       </button>
                     )}
 
-                    {/* Students tab — just show attendance status */}
                     {activeTab === 'students' && (
                       <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
                         isPresent ? 'bg-emerald-100 text-emerald-700' : 'bg-stone-100 text-stone-500'

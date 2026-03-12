@@ -13,8 +13,8 @@ export default function StudentDashboard() {
   const [search, setSearch] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [selectedDate, setSelectedDate] = useState('')
-  const [rsvps, setRsvps] = useState([])
-  const [rsvpLoading, setRsvpLoading] = useState(null)
+  const [registrations, setRegistrations] = useState([])
+  const [registerLoading, setRegisterLoading] = useState(null)
   const [user, setUser] = useState(null)
   const [profile, setProfile] = useState(null)
   const supabase = createClient()
@@ -32,11 +32,11 @@ export default function StudentDashboard() {
           .single()
         setProfile(profileData)
 
-        const { data: rsvpData } = await supabase
+        const { data: regData } = await supabase
           .from('rsvps')
           .select('event_id')
           .eq('student_id', user.id)
-        setRsvps(rsvpData?.map(r => r.event_id) || [])
+        setRegistrations(regData?.map(r => r.event_id) || [])
       }
 
       await fetchEvents()
@@ -51,7 +51,6 @@ export default function StudentDashboard() {
       .select(`*, categories (id, name, color)`)
       .in('status', ['published', 'ongoing', 'completed'])
       .order('date', { ascending: true })
-
     if (!error) setEvents(data || [])
     setLoading(false)
   }
@@ -64,25 +63,25 @@ export default function StudentDashboard() {
     fetchCategories()
   }, [])
 
-  const handleRSVP = async (eventId, isRSVPd) => {
+  const handleRegister = async (eventId, isRegistered) => {
     if (!user) return
-    setRsvpLoading(eventId)
+    setRegisterLoading(eventId)
 
-    if (isRSVPd) {
+    if (isRegistered) {
       await supabase
         .from('rsvps')
         .delete()
         .eq('event_id', eventId)
         .eq('student_id', user.id)
-      setRsvps(prev => prev.filter(id => id !== eventId))
+      setRegistrations(prev => prev.filter(id => id !== eventId))
     } else {
       await supabase
         .from('rsvps')
         .insert({ event_id: eventId, student_id: user.id })
-      setRsvps(prev => [...prev, eventId])
+      setRegistrations(prev => [...prev, eventId])
     }
 
-    setRsvpLoading(null)
+    setRegisterLoading(null)
   }
 
   const filteredEvents = events.filter(event => {
@@ -133,7 +132,6 @@ export default function StudentDashboard() {
               <SlidersHorizontal size={15} />
               <span className="text-sm font-medium">Filter:</span>
             </div>
-
             <select
               value={selectedCategory}
               onChange={e => setSelectedCategory(e.target.value)}
@@ -144,14 +142,12 @@ export default function StudentDashboard() {
                 <option key={cat.id} value={cat.name}>{cat.name}</option>
               ))}
             </select>
-
             <input
               type="date"
               value={selectedDate}
               onChange={e => setSelectedDate(e.target.value)}
               className="px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-sm text-stone-700 focus:outline-none focus:ring-2 focus:ring-stone-900"
             />
-
             {hasFilters && (
               <button
                 onClick={clearFilters}
@@ -201,9 +197,9 @@ export default function StudentDashboard() {
               <EventCard
                 key={event.id}
                 event={event}
-                onRSVP={handleRSVP}
-                isRSVPd={rsvps.includes(event.id)}
-                rsvpLoading={rsvpLoading === event.id}
+                onRegister={handleRegister}
+                isRegistered={registrations.includes(event.id)}
+                registerLoading={registerLoading === event.id}
               />
             ))}
           </div>
