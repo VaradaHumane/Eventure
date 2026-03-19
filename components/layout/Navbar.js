@@ -60,9 +60,10 @@ export default function Navbar() {
       { href: '/organiser/create', label: 'Create Event' },
     ],
     student: [
-      { href: '/student', label: 'Discover' },
-      { href: '/student/my-events', label: 'My Events' },
-    ],
+  { href: '/student', label: 'Discover' },
+  { href: '/student/my-events', label: 'My Events' },
+  { href: '/student/profile', label: 'My Profile' },
+],
   }
 
   const links = profile ? (navLinks[profile.role] || navLinks.student) : []
