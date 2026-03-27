@@ -88,7 +88,6 @@ export default function AdminUsersPage() {
     <DashboardLayout>
       <div className="space-y-6">
 
-        {/* Header */}
         <div>
           <h1 className="text-3xl font-bold text-stone-900" style={{ fontFamily: 'var(--font-lora)' }}>
             Users
@@ -96,7 +95,6 @@ export default function AdminUsersPage() {
           <p className="text-stone-500 mt-1">Manage roles and permissions for all users</p>
         </div>
 
-        {/* Role stat cards */}
         <div className="grid grid-cols-3 gap-4">
           {Object.entries(roleCounts).map(([role, count]) => {
             const config = roleConfig[role]
@@ -117,7 +115,7 @@ export default function AdminUsersPage() {
           })}
         </div>
 
-        {/* Search + filter */}
+
         <div className="bg-white rounded-2xl border border-stone-100 p-4 flex flex-wrap gap-3">
           <div className="relative flex-1 min-w-48">
             <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />

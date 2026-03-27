@@ -112,7 +112,7 @@ export default function ProfileModal({ user, onComplete }) {
             </div>
           </div>
 
-          {/* Branch */}
+
           <div>
             <label className="block text-xs font-semibold text-stone-600 mb-1">
               Branch / Department <span className="text-red-400">*</span>
@@ -130,7 +130,6 @@ export default function ProfileModal({ user, onComplete }) {
             </div>
           </div>
 
-          {/* Year + Age row */}
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-semibold text-stone-600 mb-1">
@@ -166,7 +165,6 @@ export default function ProfileModal({ user, onComplete }) {
             </div>
           </div>
 
-          {/* Gender */}
           <div>
             <label className="block text-xs font-semibold text-stone-600 mb-1">Gender</label>
             <div className="flex gap-3">
