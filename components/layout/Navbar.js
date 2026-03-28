@@ -53,6 +53,7 @@ export default function Navbar() {
       { href: '/admin', label: 'Dashboard' },
       { href: '/admin/events', label: 'Events' },
       { href: '/admin/users', label: 'Users' },
+      { href: '/admin/create', label: 'Create Event' },
     ],
     organiser: [
       { href: '/organiser', label: 'Dashboard' },

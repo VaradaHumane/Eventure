@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import DashboardLayout from '@/components/layout/DashboardLayout'
+import StudentProfilePanel from '@/components/ui/StudentProfilePanel'
 import { Users, Search, ShieldCheck, UserCheck, User } from 'lucide-react'
 import { format } from 'date-fns'
 
@@ -13,6 +14,7 @@ export default function AdminUsersPage() {
   const [search, setSearch] = useState('')
   const [roleFilter, setRoleFilter] = useState('all')
   const [currentUser, setCurrentUser] = useState(null)
+  const [selectedStudent, setSelectedStudent] = useState(null)
   const supabase = createClient()
 
   useEffect(() => {
@@ -35,39 +37,18 @@ export default function AdminUsersPage() {
   }
 
   const handleRoleChange = async (userId, newRole) => {
-    const confirmed = window.confirm(
-      `Change this user's role to "${newRole}"?`
-    )
+    const confirmed = window.confirm(`Change this user's role to "${newRole}"?`)
     if (!confirmed) return
-
     setRoleLoading(userId)
-    await supabase
-      .from('profiles')
-      .update({ role: newRole })
-      .eq('id', userId)
-
-    setUsers(prev =>
-      prev.map(u => u.id === userId ? { ...u, role: newRole } : u)
-    )
+    await supabase.from('profiles').update({ role: newRole }).eq('id', userId)
+    setUsers(prev => prev.map(u => u.id === userId ? { ...u, role: newRole } : u))
     setRoleLoading(null)
   }
 
   const roleConfig = {
-    admin: {
-      label: 'Admin',
-      color: 'bg-amber-100 text-amber-700',
-      icon: ShieldCheck,
-    },
-    organiser: {
-      label: 'Organiser',
-      color: 'bg-violet-100 text-violet-700',
-      icon: UserCheck,
-    },
-    student: {
-      label: 'Student',
-      color: 'bg-emerald-100 text-emerald-700',
-      icon: User,
-    },
+    admin: { label: 'Admin', color: 'bg-amber-100 text-amber-700', icon: ShieldCheck },
+    organiser: { label: 'Organiser', color: 'bg-violet-100 text-violet-700', icon: UserCheck },
+    student: { label: 'Student', color: 'bg-emerald-100 text-emerald-700', icon: User },
   }
 
   const filteredUsers = users.filter(user => {
@@ -92,9 +73,10 @@ export default function AdminUsersPage() {
           <h1 className="text-3xl font-bold text-stone-900" style={{ fontFamily: 'var(--font-lora)' }}>
             Users
           </h1>
-          <p className="text-stone-500 mt-1">Manage roles and permissions for all users</p>
+          <p className="text-stone-500 mt-1">Manage roles and view student profiles</p>
         </div>
 
+        {/* Role stat cards */}
         <div className="grid grid-cols-3 gap-4">
           {Object.entries(roleCounts).map(([role, count]) => {
             const config = roleConfig[role]
@@ -115,23 +97,16 @@ export default function AdminUsersPage() {
           })}
         </div>
 
-
+        {/* Search + filter */}
         <div className="bg-white rounded-2xl border border-stone-100 p-4 flex flex-wrap gap-3">
           <div className="relative flex-1 min-w-48">
             <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
-            <input
-              type="text"
-              placeholder="Search by name or email..."
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-stone-50 border border-stone-200 rounded-xl text-sm text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-900"
-            />
+            <input type="text" placeholder="Search by name or email..."
+              value={search} onChange={e => setSearch(e.target.value)}
+              className="w-full pl-9 pr-4 py-2 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-stone-900" />
           </div>
-          <select
-            value={roleFilter}
-            onChange={e => setRoleFilter(e.target.value)}
-            className="px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-sm text-stone-700 focus:outline-none focus:ring-2 focus:ring-stone-900"
-          >
+          <select value={roleFilter} onChange={e => setRoleFilter(e.target.value)}
+            className="px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-sm text-stone-700 focus:outline-none focus:ring-2 focus:ring-stone-900">
             <option value="all">All Roles</option>
             <option value="student">Students</option>
             <option value="organiser">Organisers</option>
@@ -139,7 +114,6 @@ export default function AdminUsersPage() {
           </select>
         </div>
 
-        {/* Count */}
         <p className="text-stone-500 text-sm">
           {loading ? 'Loading...' : `${filteredUsers.length} user${filteredUsers.length !== 1 ? 's' : ''}`}
         </p>
@@ -169,17 +143,17 @@ export default function AdminUsersPage() {
                 const config = roleConfig[user.role] || roleConfig.student
                 const Icon = config.icon
                 const isCurrentUser = user.id === currentUser?.id
+                const isClickable = user.role === 'student' || user.role === 'organiser'
 
                 return (
-                  <div key={user.id} className="flex items-center gap-4 px-5 py-4 hover:bg-stone-50 transition-colors">
-
-                    {/* Avatar */}
+                  <div
+                    key={user.id}
+                    onClick={() => isClickable && setSelectedStudent(user)}
+                    className={`flex items-center gap-4 px-5 py-4 transition-colors ${isClickable ? 'hover:bg-stone-50 cursor-pointer' : ''}`}
+                  >
                     {user.avatar_url ? (
-                      <img
-                        src={user.avatar_url}
-                        alt={user.full_name}
-                        className="w-10 h-10 rounded-full object-cover flex-shrink-0 border-2 border-stone-100"
-                      />
+                      <img src={user.avatar_url} alt={user.full_name}
+                        className="w-10 h-10 rounded-full object-cover flex-shrink-0 border-2 border-stone-100" />
                     ) : (
                       <div className="w-10 h-10 rounded-full bg-stone-200 flex items-center justify-center flex-shrink-0">
                         <span className="text-stone-500 text-sm font-semibold">
@@ -188,16 +162,13 @@ export default function AdminUsersPage() {
                       </div>
                     )}
 
-                    {/* Info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <p className="font-semibold text-stone-900 text-sm truncate">
                           {user.full_name || 'No name'}
                         </p>
                         {isCurrentUser && (
-                          <span className="text-xs bg-stone-100 text-stone-500 px-2 py-0.5 rounded-full">
-                            You
-                          </span>
+                          <span className="text-xs bg-stone-100 text-stone-500 px-2 py-0.5 rounded-full">You</span>
                         )}
                       </div>
                       <p className="text-stone-500 text-xs truncate">{user.email}</p>
@@ -206,15 +177,13 @@ export default function AdminUsersPage() {
                       </p>
                     </div>
 
-                    {/* Current role badge */}
                     <span className={`hidden sm:flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full ${config.color}`}>
                       <Icon size={11} />
                       {config.label}
                     </span>
 
-                    {/* Role change buttons */}
                     {!isCurrentUser && user.role !== 'admin' && (
-                      <div className="flex items-center gap-2 flex-shrink-0">
+                      <div className="flex items-center gap-2 flex-shrink-0" onClick={e => e.stopPropagation()}>
                         {user.role === 'student' ? (
                           <button
                             onClick={() => handleRoleChange(user.id, 'organiser')}
@@ -235,9 +204,12 @@ export default function AdminUsersPage() {
                       </div>
                     )}
 
-                    {/* Protect admin accounts */}
                     {user.role === 'admin' && !isCurrentUser && (
                       <span className="text-xs text-stone-400 italic">Protected</span>
+                    )}
+
+                    {isClickable && (
+                      <span className="text-stone-300 text-sm flex-shrink-0">›</span>
                     )}
                   </div>
                 )
@@ -246,6 +218,14 @@ export default function AdminUsersPage() {
           </div>
         )}
       </div>
+
+      {/* Student profile panel */}
+      {selectedStudent && (
+        <StudentProfilePanel
+          student={selectedStudent}
+          onClose={() => setSelectedStudent(null)}
+        />
+      )}
     </DashboardLayout>
   )
 }

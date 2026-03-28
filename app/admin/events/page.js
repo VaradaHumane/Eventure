@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { CheckCircle, XCircle, Calendar, Users, Search, Trash2 } from 'lucide-react'
 import { format } from 'date-fns'
+import Link from 'next/link'
 
 export default function AdminEventsPage() {
   const [events, setEvents] = useState([])
@@ -230,6 +231,12 @@ export default function AdminEventsPage() {
                           Mark Completed
                         </button>
                       )}
+                      <Link
+                        href={`/admin/events/${event.id}`}
+                        className="px-3 py-1.5 bg-stone-100 text-stone-600 hover:bg-stone-200 rounded-lg text-xs font-semibold transition-colors"
+                      >
+                        Manage
+                      </Link>
                       <button
                         onClick={() => handleDelete(event.id)}
                         disabled={actionLoading === event.id + '_delete'}
