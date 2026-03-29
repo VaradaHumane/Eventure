@@ -230,7 +230,7 @@ export default function AdminCreateEventPage() {
 
         {/* Admin-specific buttons */}
         <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
-          <p className="text-amber-800 text-xs font-semibold mb-3 uppercase tracking-wide">Admin Publish Options</p>
+          <p className="text-amber-800 text-xs font-semibold mb-3 uppercase tracking-wide">Publish Options</p>
           <div className="flex gap-3">
             <button
               onClick={() => handleSubmit('draft')}
@@ -244,12 +244,9 @@ export default function AdminCreateEventPage() {
               disabled={loading}
               className="flex-1 py-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-stone-900 font-bold text-sm transition-colors disabled:opacity-50"
             >
-              {loading ? 'Publishing...' : '⚡ Publish Immediately'}
+              {loading ? 'Publishing...' : 'Publish'}
             </button>
           </div>
-          <p className="text-amber-700 text-xs mt-2">
-            Publishing immediately skips the approval process and makes the event visible to students right away.
-          </p>
         </div>
       </div>
     </DashboardLayout>
