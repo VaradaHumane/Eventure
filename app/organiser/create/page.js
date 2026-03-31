@@ -17,6 +17,7 @@ export default function CreateEventPage() {
     capacity: '',
     category_id: '',
     tags: '',
+    requires_performance_form: false,
   })
   const [image, setImage] = useState(null)
   const [imagePreview, setImagePreview] = useState(null)
@@ -97,6 +98,7 @@ export default function CreateEventPage() {
         organiser_id: user.id,
         status: submitStatus,
         tags: form.tags ? form.tags.split(',').map(t => t.trim()).filter(Boolean) : [],
+        requires_performance_form: form.requires_performance_form,
       })
       .select()
       .single()
@@ -280,20 +282,41 @@ export default function CreateEventPage() {
           </div>
 
           {/* Tags */}
-          <div>
-            <label className="block text-sm font-semibold text-stone-700 mb-2">
-              Tags <span className="text-stone-400 font-normal">(comma separated)</span>
-            </label>
-            <input
-              type="text"
-              name="tags"
-              value={form.tags}
-              onChange={handleChange}
-              placeholder="e.g. coding, hackathon, prizes"
-              className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent"
-            />
-          </div>
+        <div>
+          <label className="block text-sm font-semibold text-stone-700 mb-2">
+            Tags <span className="text-stone-400 font-normal">(comma separated)</span>
+          </label>
+          <input
+            type="text"
+            name="tags"
+            value={form.tags}
+            onChange={handleChange}
+            placeholder="e.g. coding, hackathon, prizes"
+            className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent"
+          />
         </div>
+
+        {/* Performance form toggle */}
+        <div className="flex items-center justify-between p-4 bg-violet-50 border border-violet-200 rounded-xl">
+          <div>
+            <p className="text-sm font-semibold text-violet-900">Performance Registration Form</p>
+            <p className="text-violet-600 text-xs mt-0.5">
+              Enable this for dance, singing, music or drama competitions — students will fill in performance details when registering
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setForm(prev => ({ ...prev, requires_performance_form: !prev.requires_performance_form }))}
+            className={`relative w-12 h-6 rounded-full transition-colors flex-shrink-0 ml-4 ${
+              form.requires_performance_form ? 'bg-violet-600' : 'bg-stone-300'
+            }`}
+          >
+            <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
+              form.requires_performance_form ? 'translate-x-6' : 'translate-x-0.5'
+            }`} />
+          </button>
+        </div>
+      </div>
 
         {/* Action buttons */}
         <div className="flex gap-3">

@@ -73,12 +73,12 @@ export default function HomePage() {
               className="text-6xl md:text-8xl font-bold text-white leading-tight mb-6 animate-fade-up animate-delay-100"
               style={{ fontFamily: 'var(--font-lora)' }}
             >
-              Your college events<br />
+              Everything happening on campus<br />
               <span className="text-amber-400">all in one place.</span>
             </h1>
 
             <p className="text-stone-400 text-lg md:text-xl max-w-xl mx-auto mb-10 leading-relaxed animate-fade-up animate-delay-200">
-              A centralised platform for students, organisers and administrators to manage campus events end-to-end.
+              Plan, manage, and explore campus events effortlessly.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-up animate-delay-300">
@@ -86,14 +86,14 @@ export default function HomePage() {
                 href="/login"
                 className="flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-stone-900 font-bold px-8 py-4 rounded-xl transition-all duration-200 hover:shadow-lg group text-sm"
               >
-                Sign in with Google
+                Get Started
                 <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link
                 href="#how-it-works"
                 className="text-stone-400 hover:text-white text-sm font-medium transition-colors"
               >
-                See how it works ↓
+                See how it works
               </Link>
             </div>
           </div>

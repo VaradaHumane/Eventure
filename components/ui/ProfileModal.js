@@ -142,9 +142,9 @@ export default function ProfileModal({ user, onComplete }) {
                 className="w-full px-3 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-stone-900 text-stone-700"
               >
                 <option value="">Select year</option>
-                <option value="FE">FE (1st Year)</option>
-                <option value="SE">SE (2nd Year)</option>
-                <option value="TE">TE (3rd Year)</option>
+                <option value="FE">FY (1st Year)</option>
+                <option value="SE">SY (2nd Year)</option>
+                <option value="TE">TY (3rd Year)</option>
                 <option value="BE">BE (4th Year)</option>
               </select>
             </div>

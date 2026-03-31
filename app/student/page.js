@@ -200,6 +200,7 @@ export default function StudentDashboard() {
                 onRegister={handleRegister}
                 isRegistered={registrations.includes(event.id)}
                 registerLoading={registerLoading === event.id}
+                userId={user?.id}
               />
             ))}
           </div>

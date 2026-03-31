@@ -87,7 +87,7 @@ export default function Navbar() {
               <Zap size={16} className="text-amber-400" fill="currentColor" />
             </div>
             <span className="font-bold text-lg tracking-tight text-stone-900">
-              eventure
+              Eventure
             </span>
           </Link>
 

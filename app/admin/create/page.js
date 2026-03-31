@@ -17,6 +17,7 @@ export default function AdminCreateEventPage() {
     capacity: '',
     category_id: '',
     tags: '',
+    requires_performance_form: false,
   })
   const [image, setImage] = useState(null)
   const [imagePreview, setImagePreview] = useState(null)
@@ -91,6 +92,7 @@ export default function AdminCreateEventPage() {
         organiser_id: user.id,
         status: submitStatus,
         tags: form.tags ? form.tags.split(',').map(t => t.trim()).filter(Boolean) : [],
+        requires_performance_form: form.requires_performance_form,
       })
 
     if (insertError) {

@@ -7,6 +7,7 @@ import { useParams } from 'next/navigation'
 import { ArrowLeft, Users, CheckCircle, Circle, Calendar, MapPin, Clock, X, Phone, Hash, BookOpen, User } from 'lucide-react'
 import Link from 'next/link'
 import { format } from 'date-fns'
+import PerformanceSubmissions from '@/components/events/PerformanceSubmissions'
 
 export default function ManageEventPage() {
   const [event, setEvent] = useState(null)
@@ -101,7 +102,9 @@ export default function ManageEventPage() {
       <DashboardLayout>
         <div className="text-center py-20">
           <p className="text-stone-500">Event not found.</p>
-          <Link href="/organiser/events" className="text-stone-900 font-medium underline mt-2 block">Back to events</Link>
+          <Link href="/organiser/events" className="text-stone-900 font-medium underline mt-2 block">
+            Back to events
+          </Link>
         </div>
       </DashboardLayout>
     )
@@ -128,11 +131,24 @@ export default function ManageEventPage() {
           )}
           <div className="p-6">
             <div className="flex items-center gap-2 mb-2">
-              <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${status.color}`}>{status.label}</span>
-              {event.categories?.name && <span className="text-xs text-stone-500">{event.categories.name}</span>}
+              <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${status.color}`}>
+                {status.label}
+              </span>
+              {event.categories?.name && (
+                <span className="text-xs text-stone-500">{event.categories.name}</span>
+              )}
+              {event.requires_performance_form && (
+                <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-violet-50 text-violet-700 border border-violet-200">
+                  🎭 Performance Event
+                </span>
+              )}
             </div>
-            <h1 className="text-2xl font-bold text-stone-900" style={{ fontFamily: 'var(--font-lora)' }}>{event.title}</h1>
-            {event.description && <p className="text-stone-500 text-sm mt-2 leading-relaxed">{event.description}</p>}
+            <h1 className="text-2xl font-bold text-stone-900" style={{ fontFamily: 'var(--font-lora)' }}>
+              {event.title}
+            </h1>
+            {event.description && (
+              <p className="text-stone-500 text-sm mt-2 leading-relaxed">{event.description}</p>
+            )}
 
             <div className="flex flex-wrap gap-4 mt-4 pt-4 border-t border-stone-100">
               <div className="flex items-center gap-2 text-stone-500 text-sm">
@@ -183,115 +199,142 @@ export default function ManageEventPage() {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 bg-stone-100 p-1 rounded-xl w-fit">
+        <div className="flex gap-2 bg-stone-100 p-1 rounded-xl w-fit flex-wrap">
           <button onClick={() => setActiveTab('students')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === 'students' ? 'bg-white text-stone-900 shadow-sm' : 'text-stone-500 hover:text-stone-700'}`}>
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              activeTab === 'students' ? 'bg-white text-stone-900 shadow-sm' : 'text-stone-500 hover:text-stone-700'
+            }`}>
             Registered Students ({registrations.length})
           </button>
           <button onClick={() => setActiveTab('attendance')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === 'attendance' ? 'bg-white text-stone-900 shadow-sm' : 'text-stone-500 hover:text-stone-700'}`}>
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              activeTab === 'attendance' ? 'bg-white text-stone-900 shadow-sm' : 'text-stone-500 hover:text-stone-700'
+            }`}>
             Mark Attendance
           </button>
+          {event.requires_performance_form && (
+            <button onClick={() => setActiveTab('performance')}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                activeTab === 'performance' ? 'bg-white text-stone-900 shadow-sm' : 'text-stone-500 hover:text-stone-700'
+              }`}>
+              🎭 Performances
+            </button>
+          )}
         </div>
 
-        {/* Student list */}
-        {registrations.length === 0 ? (
-          <div className="text-center py-16 bg-white rounded-2xl border border-stone-100">
-            <div className="w-14 h-14 bg-stone-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
-              <Users size={22} className="text-stone-400" />
-            </div>
-            <p className="text-stone-900 font-semibold">No students registered yet</p>
-            <p className="text-stone-500 text-sm mt-1">Students who register will appear here</p>
-          </div>
-        ) : (
-          <div className="bg-white rounded-2xl border border-stone-100 overflow-hidden">
-            <div className="p-4 border-b border-stone-100">
-              <h2 className="font-semibold text-stone-900">
-                {activeTab === 'students' ? 'Registered Students' : 'Mark Attendance'}
-              </h2>
-              <p className="text-stone-500 text-xs mt-0.5">
-                {activeTab === 'students' ? 'Click on a student to view their full details' : 'Click the button to toggle attendance'}
-              </p>
-            </div>
-            <div className="divide-y divide-stone-50">
-              {registrations.map(registration => {
-                const student = registration.profiles
-                const isPresent = attendance.includes(student?.id)
+        {/* Performance tab content */}
+        {activeTab === 'performance' && event.requires_performance_form && (
+          <PerformanceSubmissions eventId={params.id} />
+        )}
 
-                return (
-                  <div
-                    key={registration.id}
-                    className="flex items-center gap-3 px-4 py-3 hover:bg-stone-50 transition-colors cursor-pointer"
-                    onClick={() => activeTab === 'students' && setSelectedStudent(student)}
-                  >
-                    {student?.avatar_url ? (
-                      <img src={student.avatar_url} alt={student.full_name}
-                        className="w-9 h-9 rounded-full object-cover flex-shrink-0" />
-                    ) : (
-                      <div className="w-9 h-9 rounded-full bg-stone-200 flex items-center justify-center flex-shrink-0">
-                        <span className="text-stone-500 text-sm font-semibold">{student?.full_name?.[0] || '?'}</span>
+        {/* Student list — only show when on students or attendance tab */}
+        {(activeTab === 'students' || activeTab === 'attendance') && (
+          <>
+            {registrations.length === 0 ? (
+              <div className="text-center py-16 bg-white rounded-2xl border border-stone-100">
+                <div className="w-14 h-14 bg-stone-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                  <Users size={22} className="text-stone-400" />
+                </div>
+                <p className="text-stone-900 font-semibold">No students registered yet</p>
+                <p className="text-stone-500 text-sm mt-1">Students who register will appear here</p>
+              </div>
+            ) : (
+              <div className="bg-white rounded-2xl border border-stone-100 overflow-hidden">
+                <div className="p-4 border-b border-stone-100">
+                  <h2 className="font-semibold text-stone-900">
+                    {activeTab === 'students' ? 'Registered Students' : 'Mark Attendance'}
+                  </h2>
+                  <p className="text-stone-500 text-xs mt-0.5">
+                    {activeTab === 'students'
+                      ? 'Click on a student to view their full details'
+                      : 'Click the button to toggle attendance'}
+                  </p>
+                </div>
+                <div className="divide-y divide-stone-50">
+                  {registrations.map(registration => {
+                    const student = registration.profiles
+                    const isPresent = attendance.includes(student?.id)
+
+                    return (
+                      <div
+                        key={registration.id}
+                        className="flex items-center gap-3 px-4 py-3 hover:bg-stone-50 transition-colors cursor-pointer"
+                        onClick={() => activeTab === 'students' && setSelectedStudent(student)}
+                      >
+                        {student?.avatar_url ? (
+                          <img src={student.avatar_url} alt={student.full_name}
+                            className="w-9 h-9 rounded-full object-cover flex-shrink-0" />
+                        ) : (
+                          <div className="w-9 h-9 rounded-full bg-stone-200 flex items-center justify-center flex-shrink-0">
+                            <span className="text-stone-500 text-sm font-semibold">
+                              {student?.full_name?.[0] || '?'}
+                            </span>
+                          </div>
+                        )}
+
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-stone-900 text-sm truncate">
+                            {student?.full_name || 'Unknown'}
+                          </p>
+                          <p className="text-stone-500 text-xs truncate">
+                            {student?.roll_number ? `${student.roll_number} · ` : ''}{student?.email}
+                          </p>
+                        </div>
+
+                        {activeTab === 'attendance' && (
+                          <button
+                            onClick={e => { e.stopPropagation(); toggleAttendance(student.id, isPresent) }}
+                            disabled={attendanceLoading === student.id}
+                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all disabled:opacity-50 ${
+                              isPresent
+                                ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200'
+                                : 'bg-stone-100 text-stone-500 hover:bg-stone-200'
+                            }`}>
+                            {isPresent
+                              ? <><CheckCircle size={13} /> Present</>
+                              : <><Circle size={13} /> Absent</>}
+                          </button>
+                        )}
+
+                        {activeTab === 'students' && (
+                          <div className="flex items-center gap-2">
+                            <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
+                              isPresent ? 'bg-emerald-100 text-emerald-700' : 'bg-stone-100 text-stone-500'
+                            }`}>
+                              {isPresent ? 'Attended' : 'Registered'}
+                            </span>
+                            <span className="text-stone-300 text-xs">›</span>
+                          </div>
+                        )}
                       </div>
-                    )}
-
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-stone-900 text-sm truncate">{student?.full_name || 'Unknown'}</p>
-                      <p className="text-stone-500 text-xs truncate">
-                        {student?.roll_number ? `${student.roll_number} · ` : ''}{student?.email}
-                      </p>
-                    </div>
-
-                    {activeTab === 'attendance' && (
-                      <button
-                        onClick={e => { e.stopPropagation(); toggleAttendance(student.id, isPresent) }}
-                        disabled={attendanceLoading === student.id}
-                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all disabled:opacity-50 ${
-                          isPresent ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-stone-100 text-stone-500 hover:bg-stone-200'
-                        }`}>
-                        {isPresent ? <><CheckCircle size={13} /> Present</> : <><Circle size={13} /> Absent</>}
-                      </button>
-                    )}
-
-                    {activeTab === 'students' && (
-                      <div className="flex items-center gap-2">
-                        <span className={`text-xs font-semibold px-2 py-1 rounded-full ${isPresent ? 'bg-emerald-100 text-emerald-700' : 'bg-stone-100 text-stone-500'}`}>
-                          {isPresent ? 'Attended' : 'Registered'}
-                        </span>
-                        <span className="text-stone-300 text-xs">›</span>
-                      </div>
-                    )}
-                  </div>
-                )
-              })}
-            </div>
-          </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
 
       {/* Slide-out side panel */}
       {selectedStudent && (
         <div className="fixed inset-0 z-50 flex justify-end">
-          {/* Backdrop */}
           <div
             className="absolute inset-0 bg-black/30 backdrop-blur-sm"
             onClick={() => setSelectedStudent(null)}
           />
-
-          {/* Panel */}
           <div className="relative w-full max-w-sm bg-white h-full shadow-2xl overflow-y-auto animate-fade-in">
             <div className="p-6 space-y-6">
 
-              {/* Close button */}
               <div className="flex items-center justify-between">
                 <h2 className="font-bold text-stone-900 text-lg">Student Details</h2>
                 <button
                   onClick={() => setSelectedStudent(null)}
-                  className="p-2 hover:bg-stone-100 rounded-xl transition-colors text-stone-500"
-                >
+                  className="p-2 hover:bg-stone-100 rounded-xl transition-colors text-stone-500">
                   <X size={18} />
                 </button>
               </div>
 
-              {/* Avatar + name */}
               <div className="flex flex-col items-center text-center py-4 bg-stone-50 rounded-2xl">
                 {selectedStudent?.avatar_url ? (
                   <img src={selectedStudent.avatar_url} alt={selectedStudent.full_name}
@@ -301,17 +344,17 @@ export default function ManageEventPage() {
                     <User size={28} className="text-stone-500" />
                   </div>
                 )}
-                <h3 className="font-bold text-stone-900 text-xl mt-3">{selectedStudent?.full_name || 'Unknown'}</h3>
+                <h3 className="font-bold text-stone-900 text-xl mt-3">
+                  {selectedStudent?.full_name || 'Unknown'}
+                </h3>
                 <p className="text-stone-500 text-sm">{selectedStudent?.email}</p>
                 <span className="mt-2 text-xs font-semibold px-3 py-1 rounded-full bg-emerald-100 text-emerald-700">
                   {attendance.includes(selectedStudent?.id) ? '✓ Attended' : 'Registered'}
                 </span>
               </div>
 
-              {/* Details */}
               <div className="space-y-3">
                 <h3 className="text-xs font-semibold text-stone-400 uppercase tracking-wide">Academic Info</h3>
-
                 {[
                   { icon: Hash, label: 'Roll Number', value: selectedStudent?.roll_number },
                   { icon: BookOpen, label: 'Branch', value: selectedStudent?.branch },
@@ -334,7 +377,6 @@ export default function ManageEventPage() {
                 ))}
               </div>
 
-              {/* Attendance toggle from panel */}
               <button
                 onClick={() => toggleAttendance(selectedStudent.id, attendance.includes(selectedStudent.id))}
                 disabled={attendanceLoading === selectedStudent.id}
@@ -342,8 +384,7 @@ export default function ManageEventPage() {
                   attendance.includes(selectedStudent.id)
                     ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200'
                     : 'bg-stone-900 text-white hover:bg-stone-700'
-                }`}
-              >
+                }`}>
                 {attendanceLoading === selectedStudent.id ? 'Updating...' :
                   attendance.includes(selectedStudent.id) ? '✓ Mark as Absent' : 'Mark as Present'}
               </button>
