@@ -228,11 +228,40 @@ export default function AdminCreateEventPage() {
               placeholder="e.g. coding, hackathon, prizes"
               className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-stone-900" />
           </div>
+
+          {/* Performance form toggle */}
+          <div className="p-4 bg-violet-50 border border-violet-200 rounded-xl">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-violet-900">Performance Registration Form</p>
+                <p className="text-violet-600 text-xs mt-0.5 leading-relaxed">
+                  Enable this for dance, singing, music or drama competitions — students will fill in performance details when registering
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setForm(prev => ({ ...prev, requires_performance_form: !prev.requires_performance_form }))}
+                className={`relative w-12 h-6 rounded-full transition-colors flex-shrink-0 mt-0.5 ${
+                  form.requires_performance_form ? 'bg-violet-600' : 'bg-stone-300'
+                }`}
+              >
+                <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${
+                  form.requires_performance_form ? 'translate-x-6' : 'translate-x-0.5'
+                }`} />
+              </button>
+            </div>
+            {form.requires_performance_form && (
+              <p className="text-violet-700 text-xs mt-3 pt-3 border-t border-violet-200">
+                ✓ Students will be asked for solo/group, song track, duration and special notes when registering for this event
+              </p>
+            )}
+          </div>
+
         </div>
 
-        {/* Admin-specific buttons */}
+        {/* Admin publish options */}
         <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
-          <p className="text-amber-800 text-xs font-semibold mb-3 uppercase tracking-wide">Publish Options</p>
+          <p className="text-amber-800 text-xs font-semibold mb-3 uppercase tracking-wide">Admin Publish Options</p>
           <div className="flex gap-3">
             <button
               onClick={() => handleSubmit('draft')}
@@ -246,10 +275,14 @@ export default function AdminCreateEventPage() {
               disabled={loading}
               className="flex-1 py-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-stone-900 font-bold text-sm transition-colors disabled:opacity-50"
             >
-              {loading ? 'Publishing...' : 'Publish'}
+              {loading ? 'Publishing...' : '⚡ Publish Immediately'}
             </button>
           </div>
+          <p className="text-amber-700 text-xs mt-2">
+            Publishing immediately skips the approval process and makes the event visible to students right away.
+          </p>
         </div>
+
       </div>
     </DashboardLayout>
   )

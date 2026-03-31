@@ -297,25 +297,32 @@ export default function CreateEventPage() {
         </div>
 
         {/* Performance form toggle */}
-        <div className="flex items-center justify-between p-4 bg-violet-50 border border-violet-200 rounded-xl">
-          <div>
-            <p className="text-sm font-semibold text-violet-900">Performance Registration Form</p>
-            <p className="text-violet-600 text-xs mt-0.5">
-              Enable this for dance, singing, music or drama competitions — students will fill in performance details when registering
-            </p>
-          </div>
+        <div className="p-4 bg-violet-50 border border-violet-200 rounded-xl">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-violet-900">Performance Registration Form</p>
+              <p className="text-violet-600 text-xs mt-0.5 leading-relaxed">
+                Enable this for dance, singing, music or drama competitions — students will fill in performance details when registering
+              </p>
+            </div>
           <button
             type="button"
             onClick={() => setForm(prev => ({ ...prev, requires_performance_form: !prev.requires_performance_form }))}
-            className={`relative w-12 h-6 rounded-full transition-colors flex-shrink-0 ml-4 ${
-              form.requires_performance_form ? 'bg-violet-600' : 'bg-stone-300'
+            className={`relative w-12 h-6 rounded-full transition-colors flex-shrink-0 mt-0.5 ${
+            form.requires_performance_form ? 'bg-violet-600' : 'bg-stone-300'
             }`}
           >
-            <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
+            <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${
               form.requires_performance_form ? 'translate-x-6' : 'translate-x-0.5'
             }`} />
           </button>
         </div>
+        {form.requires_performance_form && (
+          <p className="text-violet-700 text-xs mt-3 pt-3 border-t border-violet-200">
+            Students will be asked for solo/group, song track, duration and special notes when registering for this event
+          </p>
+        )}
+      </div>
       </div>
 
         {/* Action buttons */}
