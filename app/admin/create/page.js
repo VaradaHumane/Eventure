@@ -136,7 +136,9 @@ export default function AdminCreateEventPage() {
 
           {/* Image Upload */}
           <div>
-            <label className="block text-sm font-semibold text-stone-700 mb-2">Event Banner Image</label>
+            <label className="block text-sm font-semibold text-stone-700 mb-2">
+              Event Banner Image
+            </label>
             {imagePreview ? (
               <div className="relative rounded-xl overflow-hidden h-48">
                 <img src={imagePreview} alt="preview" className="w-full h-full object-cover" />
@@ -162,17 +164,27 @@ export default function AdminCreateEventPage() {
             <label className="block text-sm font-semibold text-stone-700 mb-2">
               Event Title <span className="text-red-400">*</span>
             </label>
-            <input type="text" name="title" value={form.title} onChange={handleChange}
+            <input
+              type="text"
+              name="title"
+              value={form.title}
+              onChange={handleChange}
               placeholder="e.g. Annual Tech Fest 2025"
-              className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-stone-900" />
+              className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-stone-900"
+            />
           </div>
 
           {/* Description */}
           <div>
             <label className="block text-sm font-semibold text-stone-700 mb-2">Description</label>
-            <textarea name="description" value={form.description} onChange={handleChange}
-              rows={4} placeholder="Tell students what this event is about..."
-              className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-stone-900 resize-none" />
+            <textarea
+              name="description"
+              value={form.description}
+              onChange={handleChange}
+              rows={4}
+              placeholder="Tell students what this event is about..."
+              className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-stone-900 resize-none"
+            />
           </div>
 
           {/* Dates */}
@@ -181,30 +193,49 @@ export default function AdminCreateEventPage() {
               <label className="block text-sm font-semibold text-stone-700 mb-2">
                 Start Date & Time <span className="text-red-400">*</span>
               </label>
-              <input type="datetime-local" name="date" value={form.date} onChange={handleChange}
-                className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-stone-900" />
+              <input
+                type="datetime-local"
+                name="date"
+                value={form.date}
+                onChange={handleChange}
+                className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-stone-900"
+              />
             </div>
             <div>
               <label className="block text-sm font-semibold text-stone-700 mb-2">End Date & Time</label>
-              <input type="datetime-local" name="end_date" value={form.end_date} onChange={handleChange}
-                className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-stone-900" />
+              <input
+                type="datetime-local"
+                name="end_date"
+                value={form.end_date}
+                onChange={handleChange}
+                className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-stone-900"
+              />
             </div>
           </div>
 
           {/* Location */}
           <div>
             <label className="block text-sm font-semibold text-stone-700 mb-2">Location</label>
-            <input type="text" name="location" value={form.location} onChange={handleChange}
+            <input
+              type="text"
+              name="location"
+              value={form.location}
+              onChange={handleChange}
               placeholder="e.g. Main Auditorium, Block A"
-              className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-stone-900" />
+              className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-stone-900"
+            />
           </div>
 
           {/* Category + Capacity */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-semibold text-stone-700 mb-2">Category</label>
-              <select name="category_id" value={form.category_id} onChange={handleChange}
-                className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-stone-900 text-stone-700">
+              <select
+                name="category_id"
+                value={form.category_id}
+                onChange={handleChange}
+                className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-stone-900 text-stone-700"
+              >
                 <option value="">Select category</option>
                 {categories.map(cat => (
                   <option key={cat.id} value={cat.id}>{cat.name}</option>
@@ -213,9 +244,15 @@ export default function AdminCreateEventPage() {
             </div>
             <div>
               <label className="block text-sm font-semibold text-stone-700 mb-2">Capacity</label>
-              <input type="number" name="capacity" value={form.capacity} onChange={handleChange}
-                placeholder="e.g. 100" min="1"
-                className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-stone-900" />
+              <input
+                type="number"
+                name="capacity"
+                value={form.capacity}
+                onChange={handleChange}
+                placeholder="e.g. 100"
+                min="1"
+                className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-stone-900"
+              />
             </div>
           </div>
 
@@ -224,44 +261,69 @@ export default function AdminCreateEventPage() {
             <label className="block text-sm font-semibold text-stone-700 mb-2">
               Tags <span className="text-stone-400 font-normal">(comma separated)</span>
             </label>
-            <input type="text" name="tags" value={form.tags} onChange={handleChange}
+            <input
+              type="text"
+              name="tags"
+              value={form.tags}
+              onChange={handleChange}
               placeholder="e.g. coding, hackathon, prizes"
-              className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-stone-900" />
+              className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-stone-900"
+            />
           </div>
 
           {/* Performance form toggle */}
-          <div className="p-4 bg-violet-50 border border-violet-200 rounded-xl">
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-violet-900">Performance Registration Form</p>
-                <p className="text-violet-600 text-xs mt-0.5 leading-relaxed">
-                  Enable this for dance, singing, music or drama competitions — students will fill in performance details when registering
-                </p>
+          <div className="rounded-xl overflow-hidden border border-violet-200 bg-violet-50">
+            <div className="p-4">
+              <div className="flex items-start gap-3">
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-violet-900">
+                    Performance Registration Form
+                  </p>
+                  <p className="text-violet-600 text-xs mt-1 leading-relaxed">
+                    Enable for dance, singing, music or drama competitions — students fill in performance details when registering
+                  </p>
+                </div>
+                <div className="flex-shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => setForm(prev => ({
+                      ...prev,
+                      requires_performance_form: !prev.requires_performance_form
+                    }))}
+                    style={{ width: '44px', height: '24px' }}
+                    className={`relative rounded-full transition-colors duration-200 block ${
+                      form.requires_performance_form ? 'bg-violet-600' : 'bg-stone-300'
+                    }`}
+                  >
+                    <span
+                      style={{
+                        width: '18px',
+                        height: '18px',
+                        top: '3px',
+                        position: 'absolute',
+                        transition: 'left 0.2s',
+                        left: form.requires_performance_form ? '23px' : '3px',
+                      }}
+                      className="bg-white rounded-full shadow block"
+                    />
+                  </button>
+                </div>
               </div>
-              <button
-                type="button"
-                onClick={() => setForm(prev => ({ ...prev, requires_performance_form: !prev.requires_performance_form }))}
-                className={`relative w-12 h-6 rounded-full transition-colors flex-shrink-0 mt-0.5 ${
-                  form.requires_performance_form ? 'bg-violet-600' : 'bg-stone-300'
-                }`}
-              >
-                <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${
-                  form.requires_performance_form ? 'translate-x-6' : 'translate-x-0.5'
-                }`} />
-              </button>
+              {form.requires_performance_form && (
+                <p className="text-violet-700 text-xs mt-3 pt-3 border-t border-violet-200">
+                  ✓ Students will be asked for solo/group, song track, duration and special notes when registering
+                </p>
+              )}
             </div>
-            {form.requires_performance_form && (
-              <p className="text-violet-700 text-xs mt-3 pt-3 border-t border-violet-200">
-                ✓ Students will be asked for solo/group, song track, duration and special notes when registering for this event
-              </p>
-            )}
           </div>
 
         </div>
 
         {/* Admin publish options */}
         <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
-          <p className="text-amber-800 text-xs font-semibold mb-3 uppercase tracking-wide">Admin Publish Options</p>
+          <p className="text-amber-800 text-xs font-semibold mb-3 uppercase tracking-wide">
+            Admin Publish Options
+          </p>
           <div className="flex gap-3">
             <button
               onClick={() => handleSubmit('draft')}

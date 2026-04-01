@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { useRouter } from 'next/navigation'
-import { Upload, X, Calendar, MapPin, Users, FileText, Tag, ArrowLeft } from 'lucide-react'
+import { Upload, X, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 
 export default function CreateEventPage() {
@@ -32,7 +32,6 @@ export default function CreateEventPage() {
     const init = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       setUser(user)
-
       const { data: cats } = await supabase.from('categories').select('*')
       setCategories(cats || [])
     }
@@ -55,17 +54,14 @@ export default function CreateEventPage() {
       setError('Title and date are required')
       return
     }
-
     setLoading(true)
     setError(null)
 
     let image_url = null
 
-    // Upload image if selected
     if (image) {
       const fileExt = image.name.split('.').pop()
       const fileName = `${user.id}-${Date.now()}.${fileExt}`
-
       const { error: uploadError } = await supabase.storage
         .from('event-images')
         .upload(fileName, image)
@@ -79,12 +75,10 @@ export default function CreateEventPage() {
       const { data: urlData } = supabase.storage
         .from('event-images')
         .getPublicUrl(fileName)
-
       image_url = urlData.publicUrl
     }
 
-    // Create the event
-    const { data, error: insertError } = await supabase
+    const { error: insertError } = await supabase
       .from('events')
       .insert({
         title: form.title,
@@ -100,8 +94,6 @@ export default function CreateEventPage() {
         tags: form.tags ? form.tags.split(',').map(t => t.trim()).filter(Boolean) : [],
         requires_performance_form: form.requires_performance_form,
       })
-      .select()
-      .single()
 
     if (insertError) {
       setError('Failed to create event: ' + insertError.message)
@@ -120,12 +112,8 @@ export default function CreateEventPage() {
     <DashboardLayout>
       <div className="max-w-2xl mx-auto space-y-6">
 
-        {/* Header */}
         <div className="flex items-center gap-4">
-          <Link
-            href="/organiser"
-            className="p-2 hover:bg-stone-100 rounded-xl transition-colors text-stone-500"
-          >
+          <Link href="/organiser" className="p-2 hover:bg-stone-100 rounded-xl transition-colors text-stone-500">
             <ArrowLeft size={20} />
           </Link>
           <div>
@@ -142,7 +130,7 @@ export default function CreateEventPage() {
           </div>
         )}
 
-        <div className="bg-white rounded-2xl border border-stone-100 p-6 space-y-6">
+        <div className="bg-white rounded-2xl border border-stone-100 p-6 space-y-5">
 
           {/* Image Upload */}
           <div>
@@ -154,7 +142,7 @@ export default function CreateEventPage() {
                 <img src={imagePreview} alt="preview" className="w-full h-full object-cover" />
                 <button
                   onClick={() => { setImage(null); setImagePreview(null) }}
-                  className="absolute top-2 right-2 w-8 h-8 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center transition-colors"
+                  className="absolute top-2 right-2 w-8 h-8 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center"
                 >
                   <X size={14} />
                 </button>
@@ -164,12 +152,7 @@ export default function CreateEventPage() {
                 <Upload size={24} className="text-stone-400 mb-2" />
                 <span className="text-sm text-stone-500 font-medium">Click to upload image</span>
                 <span className="text-xs text-stone-400 mt-1">PNG, JPG up to 5MB</span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="hidden"
-                />
+                <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
               </label>
             )}
           </div>
@@ -185,26 +168,24 @@ export default function CreateEventPage() {
               value={form.title}
               onChange={handleChange}
               placeholder="e.g. Annual Tech Fest 2025"
-              className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent"
+              className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-stone-900"
             />
           </div>
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-semibold text-stone-700 mb-2">
-              Description
-            </label>
+            <label className="block text-sm font-semibold text-stone-700 mb-2">Description</label>
             <textarea
               name="description"
               value={form.description}
               onChange={handleChange}
               rows={4}
               placeholder="Tell students what this event is about..."
-              className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent resize-none"
+              className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-stone-900 resize-none"
             />
           </div>
 
-          {/* Date & End Date */}
+          {/* Dates */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-semibold text-stone-700 mb-2">
@@ -215,49 +196,43 @@ export default function CreateEventPage() {
                 name="date"
                 value={form.date}
                 onChange={handleChange}
-                className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm text-stone-900 focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent"
+                className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-stone-900"
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-stone-700 mb-2">
-                End Date & Time
-              </label>
+              <label className="block text-sm font-semibold text-stone-700 mb-2">End Date & Time</label>
               <input
                 type="datetime-local"
                 name="end_date"
                 value={form.end_date}
                 onChange={handleChange}
-                className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm text-stone-900 focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent"
+                className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-stone-900"
               />
             </div>
           </div>
 
           {/* Location */}
           <div>
-            <label className="block text-sm font-semibold text-stone-700 mb-2">
-              Location
-            </label>
+            <label className="block text-sm font-semibold text-stone-700 mb-2">Location</label>
             <input
               type="text"
               name="location"
               value={form.location}
               onChange={handleChange}
               placeholder="e.g. Main Auditorium, Block A"
-              className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent"
+              className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-stone-900"
             />
           </div>
 
-          {/* Category & Capacity */}
+          {/* Category + Capacity */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-stone-700 mb-2">
-                Category
-              </label>
+              <label className="block text-sm font-semibold text-stone-700 mb-2">Category</label>
               <select
                 name="category_id"
                 value={form.category_id}
                 onChange={handleChange}
-                className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm text-stone-700 focus:outline-none focus:ring-2 focus:ring-stone-900"
+                className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-stone-900 text-stone-700"
               >
                 <option value="">Select category</option>
                 {categories.map(cat => (
@@ -266,9 +241,7 @@ export default function CreateEventPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-semibold text-stone-700 mb-2">
-                Capacity
-              </label>
+              <label className="block text-sm font-semibold text-stone-700 mb-2">Capacity</label>
               <input
                 type="number"
                 name="capacity"
@@ -276,54 +249,73 @@ export default function CreateEventPage() {
                 onChange={handleChange}
                 placeholder="e.g. 100"
                 min="1"
-                className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent"
+                className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-stone-900"
               />
             </div>
           </div>
 
           {/* Tags */}
-        <div>
-          <label className="block text-sm font-semibold text-stone-700 mb-2">
-            Tags <span className="text-stone-400 font-normal">(comma separated)</span>
-          </label>
-          <input
-            type="text"
-            name="tags"
-            value={form.tags}
-            onChange={handleChange}
-            placeholder="e.g. coding, hackathon, prizes"
-            className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent"
-          />
-        </div>
+          <div>
+            <label className="block text-sm font-semibold text-stone-700 mb-2">
+              Tags <span className="text-stone-400 font-normal">(comma separated)</span>
+            </label>
+            <input
+              type="text"
+              name="tags"
+              value={form.tags}
+              onChange={handleChange}
+              placeholder="e.g. coding, hackathon, prizes"
+              className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-stone-900"
+            />
+          </div>
 
-        {/* Performance form toggle */}
-        <div className="p-4 bg-violet-50 border border-violet-200 rounded-xl">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-violet-900">Performance Registration Form</p>
-              <p className="text-violet-600 text-xs mt-0.5 leading-relaxed">
-                Enable this for dance, singing, music or drama competitions — students will fill in performance details when registering
-              </p>
+          {/* Performance form toggle */}
+          <div className="rounded-xl overflow-hidden border border-violet-200 bg-violet-50">
+            <div className="p-4">
+              <div className="flex items-start gap-3">
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-violet-900">
+                    Performance Registration Form
+                  </p>
+                  <p className="text-violet-600 text-xs mt-1 leading-relaxed">
+                    Enable for dance, singing, music or drama competitions — students fill in performance details when registering
+                  </p>
+                </div>
+                <div className="flex-shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => setForm(prev => ({
+                      ...prev,
+                      requires_performance_form: !prev.requires_performance_form
+                    }))}
+                    style={{ width: '44px', height: '24px' }}
+                    className={`relative rounded-full transition-colors duration-200 block ${
+                      form.requires_performance_form ? 'bg-violet-600' : 'bg-stone-300'
+                    }`}
+                  >
+                    <span
+                      style={{
+                        width: '18px',
+                        height: '18px',
+                        top: '3px',
+                        position: 'absolute',
+                        transition: 'left 0.2s',
+                        left: form.requires_performance_form ? '23px' : '3px',
+                      }}
+                      className="bg-white rounded-full shadow block"
+                    />
+                  </button>
+                </div>
+              </div>
+              {form.requires_performance_form && (
+                <p className="text-violet-700 text-xs mt-3 pt-3 border-t border-violet-200">
+                  ✓ Students will be asked for solo/group, song track, duration and special notes when registering
+                </p>
+              )}
             </div>
-          <button
-            type="button"
-            onClick={() => setForm(prev => ({ ...prev, requires_performance_form: !prev.requires_performance_form }))}
-            className={`relative w-12 h-6 rounded-full transition-colors flex-shrink-0 mt-0.5 ${
-            form.requires_performance_form ? 'bg-violet-600' : 'bg-stone-300'
-            }`}
-          >
-            <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${
-              form.requires_performance_form ? 'translate-x-6' : 'translate-x-0.5'
-            }`} />
-          </button>
+          </div>
+
         </div>
-        {form.requires_performance_form && (
-          <p className="text-violet-700 text-xs mt-3 pt-3 border-t border-violet-200">
-            Students will be asked for solo/group, song track, duration and special notes when registering for this event
-          </p>
-        )}
-      </div>
-      </div>
 
         {/* Action buttons */}
         <div className="flex gap-3">
@@ -346,6 +338,7 @@ export default function CreateEventPage() {
         <p className="text-xs text-stone-400 text-center">
           Submitting for approval will send your event to the admin for review before it goes live.
         </p>
+
       </div>
     </DashboardLayout>
   )
